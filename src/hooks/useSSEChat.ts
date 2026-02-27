@@ -14,17 +14,12 @@ export interface ChatMessage {
 const BOT_USER = { _id: "bot", name: "WOPR" };
 const ME_USER = { _id: "me", name: "You" };
 
-let msgId = 0;
-function nextId(): string {
-  return String(++msgId);
-}
-
 export function useSSEChat(sessionId: string) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   const pendingRef = useRef<string>("");
-  const esRef = useRef<InstanceType<typeof EventSource> | null>(null);
 
   useEffect(() => {
     const url = `${API_BASE_URL}/api/chat/stream?sessionId=${encodeURIComponent(sessionId)}`;
@@ -42,7 +37,7 @@ export function useSSEChat(sessionId: string) {
         } else if (parsed.type === "error") {
           setMessages((prev) => [
             {
-              _id: nextId(),
+              _id: crypto.randomUUID(),
               text: `Error: ${parsed.message}`,
               createdAt: new Date(),
               user: BOT_USER,
@@ -55,7 +50,12 @@ export function useSSEChat(sessionId: string) {
             const text = pendingRef.current;
             pendingRef.current = "";
             setMessages((prev) => [
-              { _id: nextId(), text, createdAt: new Date(), user: BOT_USER },
+              {
+                _id: crypto.randomUUID(),
+                text,
+                createdAt: new Date(),
+                user: BOT_USER,
+              },
               ...prev,
             ]);
           }
@@ -68,23 +68,23 @@ export function useSSEChat(sessionId: string) {
 
     es.addEventListener("error", () => {
       setIsConnected(false);
-      // Reconnect after 3 seconds by closing — the effect re-runs on sessionId change
+      es.close();
+      // Reconnect after 3 seconds by incrementing retryCount, which re-runs this effect
       setTimeout(() => {
-        esRef.current?.close();
+        setRetryCount((c) => c + 1);
       }, 3000);
     });
 
-    esRef.current = es;
     return () => {
       es.close();
     };
-  }, [sessionId]);
+  }, [sessionId, retryCount]);
 
   const sendMessage = useCallback(
     async (text: string) => {
       // Add user message immediately
       setMessages((prev) => [
-        { _id: nextId(), text, createdAt: new Date(), user: ME_USER },
+        { _id: crypto.randomUUID(), text, createdAt: new Date(), user: ME_USER },
         ...prev,
       ]);
 

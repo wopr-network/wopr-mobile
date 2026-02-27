@@ -5,6 +5,13 @@
     "scheme": "wopr",
     "version": "1.0.0",
     "platforms": ["ios", "android"],
+    "userInterfaceStyle": "dark",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0a0a0a"
+    },
     "ios": {
       "bundleIdentifier": "network.wopr.mobile",
       "supportsTablet": true
@@ -12,6 +19,7 @@
     "android": {
       "package": "network.wopr.mobile",
       "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0a0a0a"
       }
     },
