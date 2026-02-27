@@ -21,6 +21,7 @@ export function useSSEChat(sessionId: string) {
   const [retryCount, setRetryCount] = useState(0);
   const pendingRef = useRef<string>("");
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: retryCount is intentionally used as a reconnect trigger
   useEffect(() => {
     const url = `${API_BASE_URL}/api/chat/stream?sessionId=${encodeURIComponent(sessionId)}`;
     const es = new EventSource(url, { withCredentials: true });
@@ -84,7 +85,12 @@ export function useSSEChat(sessionId: string) {
     async (text: string) => {
       // Add user message immediately
       setMessages((prev) => [
-        { _id: crypto.randomUUID(), text, createdAt: new Date(), user: ME_USER },
+        {
+          _id: crypto.randomUUID(),
+          text,
+          createdAt: new Date(),
+          user: ME_USER,
+        },
         ...prev,
       ]);
 
@@ -93,7 +99,7 @@ export function useSSEChat(sessionId: string) {
         body: JSON.stringify({ sessionId, message: text }),
       });
     },
-    [sessionId]
+    [sessionId],
   );
 
   return { messages, sendMessage, isConnected, isTyping };

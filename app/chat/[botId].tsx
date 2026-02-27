@@ -14,7 +14,7 @@ export default function ChatScreen() {
       const text = newMessages[0]?.text;
       if (text) sendMessage(text);
     },
-    [sendMessage]
+    [sendMessage],
   );
 
   // Map our ChatMessage to GiftedChat IMessage format

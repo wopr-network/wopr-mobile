@@ -1,5 +1,11 @@
 import { useRouter } from "expo-router";
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { BotCard } from "../../src/components/BotCard";
 import { useBots } from "../../src/hooks/useBots";
 
@@ -30,10 +36,7 @@ export default function BotListScreen() {
       data={bots}
       keyExtractor={(b) => b.id}
       renderItem={({ item }) => (
-        <BotCard
-          bot={item}
-          onPress={() => router.push(`/chat/${item.id}`)}
-        />
+        <BotCard bot={item} onPress={() => router.push(`/chat/${item.id}`)} />
       )}
       onRefresh={refresh}
       refreshing={isLoading}

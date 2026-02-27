@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import type { AuthUser } from "../api/auth";
 import {
-  getSession,
   signIn as apiSignIn,
   signOut as apiSignOut,
+  getSession,
 } from "../api/auth";
 
 export function useAuth() {

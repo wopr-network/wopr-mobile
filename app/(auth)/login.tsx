@@ -28,7 +28,7 @@ export default function LoginScreen() {
     } catch (err: unknown) {
       Alert.alert(
         "Login Failed",
-        err instanceof Error ? err.message : "Unknown error"
+        err instanceof Error ? err.message : "Unknown error",
       );
     } finally {
       setLoading(false);
